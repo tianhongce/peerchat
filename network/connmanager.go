@@ -25,9 +25,10 @@ func NewConnManager(ip string) *ConnManager {
 }
 
 // Start 封装了startListen和acceptConn函数
-func (connManager *ConnManager) Start(localIP string) {
+func (connManager *ConnManager) Start(localIP string, targetIP string) {
 	connManager.startListen(localIP)
 	go connManager.acceptConn()
+	connManager.requestConn(targetIP)
 }
 
 // startListen 开始监听某个端口
@@ -89,7 +90,7 @@ func (connManager *ConnManager) acceptConn() {
 // BroadCast 向所有建立的连接广播消息
 func (connManager *ConnManager) BroadCast(msg *Message) {
 	for _, serverPeer := range connManager.ServerPeers {
-		fmt.Println(serverPeer.peer.conn.LocalAddr().String())
+		fmt.Println(serverPeer.peer.conn.RemoteAddr().String())
 		serverPeer.SendMessage(msg)
 	}
 }

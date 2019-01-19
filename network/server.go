@@ -11,24 +11,28 @@ import (
 // Server 封装connManager
 type Server struct {
 	connManager *ConnManager
+	localIP     string
+	targetIP    string
 }
 
 // StartServer 开启服务，监听……，开启连接……
-func (server *Server) StartServer(localIP string) {
+func (server *Server) StartServer(localIP string, targetIP string) {
+	server.localIP = localIP
+	server.targetIP = targetIP
 	server.connManager = NewConnManager(localIP)
-	server.connManager.Start(localIP)
+	server.connManager.Start(localIP, targetIP)
 }
 
 // Input 进行业务逻辑的交互
-func (server *Server) Input(text string, targetIP string) {
+func (server *Server) Input(text string) {
 
 	ts := strings.Split(text, "@")
-	msg := Message{ts[1], time.Now().Format("2006-01-02 15:04:05"), server.connManager.LocalIP, targetIP}
+	msg := Message{ts[1], time.Now().Format("2006-01-02 15:04:05"), server.localIP, server.targetIP}
 	switch ts[0] {
 	case "bd":
 		server.connManager.BroadCast(&msg)
 	case "send":
-		server.connManager.Send(&msg, targetIP)
+		server.connManager.Send(&msg, server.targetIP)
 	default:
 		fmt.Println("Invalid command")
 	}
@@ -36,9 +40,9 @@ func (server *Server) Input(text string, targetIP string) {
 }
 
 // Interaction 进行交互
-func (server *Server) Interaction(targetIP string) {
+func (server *Server) Interaction() {
 	for {
-		server.Input(InputMsg(), targetIP)
+		server.Input(InputMsg())
 	}
 }
 
