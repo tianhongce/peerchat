@@ -20,6 +20,17 @@ type Message struct {
 	To       string
 }
 
+// NewMessage 新建一个格式化的消息
+func NewMessage(msgText string, sendTime string, from string, to string) *Message {
+	newMessage := &Message{
+		MsgText:  msgText,
+		SendTime: sendTime,
+		From:     from,
+		To:       to,
+	}
+	return newMessage
+}
+
 // MsgFormat 将Message信息格式化输出
 func (msg *Message) MsgFormat() {
 	fmt.Printf("Received from: %s \n", msg.From)

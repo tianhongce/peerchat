@@ -1,9 +1,7 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"os"
 
 	"chat_v3.2/network"
 )
@@ -18,15 +16,6 @@ func main() {
 	fmt.Scanln(&targetPort)
 	localIP := "127.0.0.1:"
 	server.StartServer(localIP + localPort)
-	go server.Interaction(InputMsg(), localIP+targetPort)
-}
+	server.Interaction(localIP + targetPort)
 
-// InputMsg 信息输入
-func InputMsg() string {
-	reader := bufio.NewReader(os.Stdin)
-	data, _, _ := reader.ReadLine()
-	if string(data) == "exit" {
-		os.Exit(3)
-	}
-	return string(data)
 }

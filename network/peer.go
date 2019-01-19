@@ -12,6 +12,15 @@ type Peer struct {
 	conn     net.Conn
 }
 
+// NewPeer 新建一个Peer
+func NewPeer(ip string, conn net.Conn) *Peer {
+	peer := &Peer{
+		targetIP: ip,
+		conn:     conn,
+	}
+	return peer
+}
+
 // SendMsg 转码成为buf并发送
 func (peer *Peer) SendMsg(byte []byte) {
 	_, err := peer.conn.Write(byte)
@@ -25,7 +34,6 @@ func (peer *Peer) RecvMsg() []byte {
 	buf := make([]byte, 1024)
 	bufLan, err := peer.conn.Read(buf)
 	var bufMsg []byte
-	log.Println(buf)
 	if err != nil {
 		log.Printf("接收消息出现错误：%v", err)
 	} else {
