@@ -15,38 +15,41 @@ type Server struct {
 	targetIP    string
 }
 
-// StartServer 开启服务，监听……，开启连接……
-func (server *Server) StartServer(localIP string, targetIP string) {
+// StartServer 开启server，监听本地IP的连接
+func (server *Server) StartServer(localIP string) {
 	server.localIP = localIP
-	server.targetIP = targetIP
 	server.connManager = NewConnManager(localIP)
-	server.connManager.Start(localIP, targetIP)
+	server.connManager.Start(localIP)
 }
 
 // Input 进行业务逻辑的交互
+// 如果是广播消息，消息的格式：bd@text
+// 如果是发送消息，消息的格式：send@x.x.x.x(IP地址)@text
 func (server *Server) Input(text string) {
 
-	ts := strings.Split(text, "@")
-	msg := Message{ts[1], time.Now().Format("2006-01-02 15:04:05"), server.localIP, server.targetIP}
-	switch ts[0] {
+	textString := strings.Split(text, "@")
+	switch textString[0] {
 	case "bd":
+		msg := Message{textString[1], time.Now().Format("2006-01-02 15:04:05"), server.localIP, server.targetIP}
 		server.connManager.BroadCast(&msg)
 	case "send":
-		server.connManager.Send(&msg, server.targetIP)
+		textIP := strings.Split(textString[1], "@")
+		msg := Message{textIP[1], time.Now().Format("2006-01-02 15:04:05"), server.localIP, server.targetIP}
+		server.connManager.Send(&msg, textIP[0])
 	default:
-		fmt.Println("Invalid command")
+		fmt.Println("Invalid command， input again")
 	}
-
 }
 
 // Interaction 进行交互
+// 使用for循环保证主线程一直在接收键盘的操作
 func (server *Server) Interaction() {
 	for {
 		server.Input(InputMsg())
 	}
 }
 
-// InputMsg 信息输入
+// InputMsg 读取键盘上的输入
 func InputMsg() string {
 	reader := bufio.NewReader(os.Stdin)
 	data, _, _ := reader.ReadLine()
