@@ -1,7 +1,7 @@
 # 内网节点之间通讯
 
 ## 代码结构
-![](https://www.processon.com/view/link/5c42d3e8e4b08a7683adc317)
+![image](peerchat.png)
 
 ## 模块功能
 
