@@ -36,6 +36,8 @@ func (server *Server) Input(text string) {
 		textIP := strings.Split(textString[1], "@")
 		msg := Message{textIP[1], time.Now().Format("2006-01-02 15:04:05"), server.localIP, server.targetIP}
 		server.connManager.Send(&msg, textIP[0])
+	case "exit":
+		os.Exit(3)
 	default:
 		fmt.Println("Invalid command， input again")
 	}
